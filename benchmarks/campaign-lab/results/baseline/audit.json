@@ -1,0 +1,288 @@
+{
+  "url": "http://127.0.0.1:4173/baseline/",
+  "auditedAt": "2026-09-25T18:39:25.954Z",
+  "viewports": {
+    "desktop": {
+      "status": 200,
+      "horizontalOverflow": false,
+      "scrollWidth": 1440,
+      "viewportWidth": 1440,
+      "domNodes": 109,
+      "navigation": {
+        "domContentLoadedMs": 38,
+        "loadMs": 40,
+        "transferBytes": 4002
+      },
+      "consoleErrors": [],
+      "axeViolations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": [
+            [
+              ".workspace > small"
+            ],
+            [
+              "header > span"
+            ],
+            [
+              ".user"
+            ],
+            [
+              ".metric:nth-child(1) > span"
+            ],
+            [
+              ".metric:nth-child(1) > small"
+            ],
+            [
+              ".metric:nth-child(2) > span"
+            ],
+            [
+              ".metric:nth-child(2) > small"
+            ],
+            [
+              ".metric:nth-child(3) > span"
+            ],
+            [
+              ".metric:nth-child(3) > small"
+            ],
+            [
+              ".section-heading > div:nth-child(1) > .eyebrow"
+            ],
+            [
+              "button[data-filter=\"all\"]"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .campaign-name > .number"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .campaign-name > div > .client"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .progress > span"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .status"
+            ],
+            [
+              "#fieldwork > .campaign-name > .number"
+            ],
+            [
+              "#fieldwork > .campaign-name > div > .client"
+            ],
+            [
+              "#fieldwork > .progress > span"
+            ],
+            [
+              ".attention"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .campaign-name > .number"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .campaign-name > div > .client"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .progress > span"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .status"
+            ],
+            [
+              "#milestone > div > .eyebrow"
+            ],
+            [
+              "#milestone > div > p:nth-child(3)"
+            ]
+          ]
+        }
+      ]
+    },
+    "tablet": {
+      "status": 200,
+      "horizontalOverflow": false,
+      "scrollWidth": 768,
+      "viewportWidth": 768,
+      "domNodes": 109,
+      "navigation": {
+        "domContentLoadedMs": 25,
+        "loadMs": 26,
+        "transferBytes": 4002
+      },
+      "consoleErrors": [],
+      "axeViolations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": [
+            [
+              "header > span"
+            ],
+            [
+              ".user"
+            ],
+            [
+              ".metric:nth-child(1) > span"
+            ],
+            [
+              ".metric:nth-child(1) > small"
+            ],
+            [
+              ".metric:nth-child(2) > span"
+            ],
+            [
+              ".metric:nth-child(2) > small"
+            ],
+            [
+              ".metric:nth-child(3) > span"
+            ],
+            [
+              ".metric:nth-child(3) > small"
+            ],
+            [
+              ".section-heading > div:nth-child(1) > .eyebrow"
+            ],
+            [
+              "button[data-filter=\"all\"]"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .campaign-name > .number"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .campaign-name > div > .client"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .progress > span"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .status"
+            ],
+            [
+              "#fieldwork > .campaign-name > .number"
+            ],
+            [
+              "#fieldwork > .campaign-name > div > .client"
+            ],
+            [
+              "#fieldwork > .progress > span"
+            ],
+            [
+              ".attention"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .campaign-name > .number"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .campaign-name > div > .client"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .progress > span"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .status"
+            ],
+            [
+              "#milestone > div > .eyebrow"
+            ],
+            [
+              "#milestone > div > p:nth-child(3)"
+            ]
+          ]
+        }
+      ]
+    },
+    "mobile": {
+      "status": 200,
+      "horizontalOverflow": false,
+      "scrollWidth": 390,
+      "viewportWidth": 390,
+      "domNodes": 109,
+      "navigation": {
+        "domContentLoadedMs": 85,
+        "loadMs": 85,
+        "transferBytes": 4002
+      },
+      "consoleErrors": [],
+      "axeViolations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": [
+            [
+              "header > span"
+            ],
+            [
+              ".metric:nth-child(1) > span"
+            ],
+            [
+              ".metric:nth-child(1) > small"
+            ],
+            [
+              ".metric:nth-child(2) > span"
+            ],
+            [
+              ".metric:nth-child(2) > small"
+            ],
+            [
+              ".metric:nth-child(3) > span"
+            ],
+            [
+              ".metric:nth-child(3) > small"
+            ],
+            [
+              ".section-heading > div:nth-child(1) > .eyebrow"
+            ],
+            [
+              "button[data-filter=\"all\"]"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .campaign-name > .number"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .campaign-name > div > .client"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .progress > span"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(1) > .status"
+            ],
+            [
+              "#fieldwork > .campaign-name > .number"
+            ],
+            [
+              "#fieldwork > .campaign-name > div > .client"
+            ],
+            [
+              "#fieldwork > .progress > span"
+            ],
+            [
+              ".attention"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .campaign-name > .number"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .campaign-name > div > .client"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .progress > span"
+            ],
+            [
+              "article[data-status=\"active\"]:nth-child(3) > .status"
+            ],
+            [
+              "#milestone > div > .eyebrow"
+            ],
+            [
+              "#milestone > div > p:nth-child(3)"
+            ]
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,7 @@
+node_modules/
+**/.design/captures/
+**/.design/baselines/
+**/.design/diffs/
+playwright-report/
+test-results/
+.DS_Store

@@ -1,0 +1,370 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: #f7f8fc;
+  color: #1b2940;
+  font:
+    15px/1.5 Arial,
+    sans-serif;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
+.app-shell {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  min-height: 100vh;
+}
+.sidebar {
+  background: #fff;
+  border-right: 1px solid #e4e8ef;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+.brand {
+  font-weight: 750;
+  font-size: 20px;
+  padding: 0 12px;
+  color: #5058c8;
+}
+.sidebar nav {
+  display: grid;
+  gap: 6px;
+}
+.sidebar nav a {
+  padding: 11px 12px;
+  border-radius: 8px;
+  color: #526073;
+}
+.sidebar nav a[aria-current] {
+  background: #eef0ff;
+  color: #5058c8;
+  font-weight: 700;
+}
+.workspace {
+  margin-top: auto;
+  border-top: 1px solid #e5e8ee;
+  padding: 22px 12px 0;
+  font-weight: 700;
+}
+.workspace small {
+  color: #8993a4;
+  font-weight: 400;
+}
+.topbar {
+  height: 70px;
+  background: #fff;
+  border-bottom: 1px solid #e4e8ef;
+  padding: 0 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #6d7889;
+  font-size: 13px;
+}
+.user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  background: #dce0ff;
+  color: #5159bc;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.content {
+  max-width: 1300px;
+  margin: auto;
+  padding: 36px;
+}
+.hero {
+  background: linear-gradient(110deg, #606de2, #896ee7);
+  border-radius: 16px;
+  padding: 42px;
+  color: #fff;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.hero h1 {
+  font-size: 32px;
+  line-height: 1.16;
+  margin: 0 0 12px;
+}
+.hero p:last-child {
+  margin: 0;
+  color: #f1eeff;
+}
+.primary-action {
+  background: #fff;
+  color: #5a5ccc;
+  border-radius: 8px;
+  padding: 12px 17px;
+  white-space: nowrap;
+  font-weight: 700;
+}
+.primary-action span {
+  margin-left: 10px;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin: 25px 0 43px;
+}
+.metric {
+  background: #fff;
+  border: 1px solid #e4e8ef;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 3px 8px #1d294008;
+  display: grid;
+  gap: 4px;
+}
+.metric span {
+  color: #728092;
+}
+.metric strong {
+  font-size: 29px;
+}
+.metric small {
+  color: #1b9a70;
+}
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 17px;
+}
+.section-heading h2 {
+  font-size: 25px;
+  margin: 0;
+}
+.section-heading .eyebrow {
+  color: #8793a3;
+}
+.filters {
+  display: flex;
+  gap: 4px;
+  background: #e9edf5;
+  padding: 4px;
+  border-radius: 9px;
+}
+.filters button {
+  border: 0;
+  border-radius: 7px;
+  padding: 8px 15px;
+  background: transparent;
+  color: #647184;
+}
+.filters button[aria-pressed="true"] {
+  background: #fff;
+  color: #4350b5;
+  box-shadow: 0 1px 5px #25305218;
+}
+.campaign-list {
+  display: grid;
+  gap: 12px;
+}
+.campaign {
+  background: #fff;
+  border: 1px solid #e4e8ef;
+  border-radius: 12px;
+  padding: 21px 24px;
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) 210px 100px;
+  align-items: center;
+  gap: 20px;
+}
+.campaign[hidden] {
+  display: none;
+}
+.campaign-name {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+.number {
+  background: #f0f2f8;
+  border-radius: 8px;
+  padding: 9px;
+  color: #8d97a8;
+  font-size: 12px;
+}
+.client {
+  color: #8994a3;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.campaign h3 {
+  font-size: 17px;
+  margin: 2px 0 0;
+}
+.progress span {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #7f8a99;
+}
+.progress b {
+  color: #24354b;
+}
+.track {
+  background: #edf0f5;
+  height: 7px;
+  border-radius: 9px;
+  margin-top: 9px;
+  overflow: hidden;
+}
+.track i {
+  display: block;
+  background: #696ee0;
+  height: 100%;
+  border-radius: 9px;
+}
+.status {
+  font-size: 11px;
+  font-weight: 700;
+  color: #1a9871;
+  background: #e8f7f1;
+  padding: 7px 9px;
+  border-radius: 20px;
+  text-align: center;
+}
+.status.attention {
+  color: #ac7422;
+  background: #fff3df;
+}
+.status.complete {
+  color: #677589;
+  background: #e9edf2;
+}
+.milestone {
+  margin: 35px 0;
+  background: #fff;
+  border: 1px solid #e4e8ef;
+  border-radius: 12px;
+  padding: 27px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.milestone .eyebrow {
+  color: #626ce0;
+}
+.milestone h2 {
+  font-size: 20px;
+  margin: 0 0 6px;
+}
+.milestone p:last-child {
+  margin: 0;
+  color: #7a8798;
+}
+.milestone a {
+  font-weight: 700;
+  color: #5861d2;
+  white-space: nowrap;
+}
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid #172eb5;
+  outline-offset: 3px;
+}
+@media (max-width: 850px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    gap: 12px;
+    padding: 15px 20px;
+  }
+  .sidebar nav {
+    display: flex;
+    gap: 8px;
+  }
+  .sidebar nav a {
+    padding: 7px;
+  }
+  .workspace {
+    display: none;
+  }
+  .topbar {
+    padding: 0 20px;
+  }
+  .content {
+    padding: 22px;
+  }
+  .campaign {
+    grid-template-columns: 1fr 140px;
+    gap: 12px;
+  }
+  .status {
+    grid-column: 1/-1;
+    justify-self: start;
+  }
+}
+@media (max-width: 580px) {
+  .topbar .user {
+    font-size: 0;
+  }
+  .hero {
+    padding: 28px;
+    display: block;
+  }
+  .hero h1 {
+    font-size: 27px;
+  }
+  .primary-action {
+    display: inline-block;
+    margin-top: 20px;
+  }
+  .metrics {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  .metric {
+    padding: 16px;
+  }
+  .campaign {
+    grid-template-columns: 1fr;
+  }
+  .status {
+    grid-column: auto;
+  }
+  .milestone {
+    display: block;
+  }
+  .milestone a {
+    display: inline-block;
+    margin-top: 18px;
+  }
+}

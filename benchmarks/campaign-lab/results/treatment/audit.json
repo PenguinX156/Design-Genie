@@ -1,0 +1,48 @@
+{
+  "url": "http://127.0.0.1:4173/treatment/",
+  "auditedAt": "2026-09-25T18:40:48.161Z",
+  "viewports": {
+    "desktop": {
+      "status": 200,
+      "horizontalOverflow": false,
+      "scrollWidth": 1440,
+      "viewportWidth": 1440,
+      "domNodes": 109,
+      "navigation": {
+        "domContentLoadedMs": 27,
+        "loadMs": 29,
+        "transferBytes": 4002
+      },
+      "consoleErrors": [],
+      "axeViolations": []
+    },
+    "tablet": {
+      "status": 200,
+      "horizontalOverflow": false,
+      "scrollWidth": 768,
+      "viewportWidth": 768,
+      "domNodes": 109,
+      "navigation": {
+        "domContentLoadedMs": 102,
+        "loadMs": 103,
+        "transferBytes": 4002
+      },
+      "consoleErrors": [],
+      "axeViolations": []
+    },
+    "mobile": {
+      "status": 200,
+      "horizontalOverflow": false,
+      "scrollWidth": 390,
+      "viewportWidth": 390,
+      "domNodes": 109,
+      "navigation": {
+        "domContentLoadedMs": 93,
+        "loadMs": 93,
+        "transferBytes": 4002
+      },
+      "consoleErrors": [],
+      "axeViolations": []
+    }
+  }
+}

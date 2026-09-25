@@ -1,0 +1,21 @@
+{
+  "name": "design-genie",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A model-agnostic design direction and visual QA workflow for coding agents",
+  "bin": { "design": "./packages/cli/design.mjs" },
+  "scripts": {
+    "design": "node ./packages/cli/design.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "benchmark:serve": "node benchmarks/campaign-lab/server.mjs",
+    "benchmark:check": "node benchmarks/campaign-lab/check.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "pixelmatch": "^7.1.0",
+    "playwright": "^1.55.0",
+    "pngjs": "^7.0.0"
+  }
+}

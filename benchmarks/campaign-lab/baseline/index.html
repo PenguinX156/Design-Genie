@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Campaign Lab — Overview</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#overview">Campaign Lab</a>
+        <nav aria-label="Primary">
+          <a href="#overview" aria-current="page">Overview</a
+          ><a href="#campaigns">Campaigns</a><a href="#milestone">Schedule</a>
+        </nav>
+        <div class="workspace">
+          Northstar Studio<br /><small>Team workspace</small>
+        </div>
+      </aside>
+      <main id="overview">
+        <header class="topbar">
+          <span>Workspace / Overview</span>
+          <div class="user">
+            Friday, September 25
+            <span class="avatar" aria-hidden="true">NS</span>
+          </div>
+        </header>
+        <div class="content">
+          <section class="hero">
+            <div>
+              <p class="eyebrow">Your pulse, at a glance</p>
+              <h1>Good morning, Northstar.</h1>
+              <p>Everything you need to keep your campaigns moving.</p>
+            </div>
+            <a class="primary-action" href="#campaigns"
+              >View campaigns <span aria-hidden="true">→</span></a
+            >
+          </section>
+          <section class="metrics" aria-label="Performance summary">
+            <div class="metric">
+              <span>Combined reach</span><strong>284.6k</strong
+              ><small>↑ 18.4% vs last month</small>
+            </div>
+            <div class="metric">
+              <span>Engagement rate</span><strong>6.8%</strong
+              ><small>↑ 1.2 pts vs last month</small>
+            </div>
+            <div class="metric">
+              <span>Active campaigns</span><strong>03</strong
+              ><small>Across 3 clients</small>
+            </div>
+          </section>
+          <section class="campaign-section" id="campaigns">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Portfolio</p>
+                <h2>Campaigns</h2>
+              </div>
+              <div class="filters" role="group" aria-label="Campaign filter">
+                <button type="button" data-filter="active" aria-pressed="true">
+                  Active</button
+                ><button type="button" data-filter="all" aria-pressed="false">
+                  All
+                </button>
+              </div>
+            </div>
+            <div class="campaign-list">
+              <article class="campaign" data-status="active">
+                <div class="campaign-name">
+                  <span class="number">01</span>
+                  <div>
+                    <span class="client">ALTO / PRODUCT LAUNCH</span>
+                    <h3>Move with intent</h3>
+                  </div>
+                </div>
+                <div class="progress">
+                  <span>Reach <b>128.4k</b></span>
+                  <div class="track"><i style="width: 78%"></i></div>
+                </div>
+                <span class="status">On track</span>
+              </article>
+              <article class="campaign" id="fieldwork" data-status="active">
+                <div class="campaign-name">
+                  <span class="number">02</span>
+                  <div>
+                    <span class="client">FIELDWORK / COMMUNITY</span>
+                    <h3>Made of many</h3>
+                  </div>
+                </div>
+                <div class="progress">
+                  <span>Reach <b>96.2k</b></span>
+                  <div class="track"><i style="width: 59%"></i></div>
+                </div>
+                <span class="status attention">Needs review</span>
+              </article>
+              <article class="campaign" data-status="active">
+                <div class="campaign-name">
+                  <span class="number">03</span>
+                  <div>
+                    <span class="client">NOVA / BRAND STORY</span>
+                    <h3>A different kind of energy</h3>
+                  </div>
+                </div>
+                <div class="progress">
+                  <span>Reach <b>60.0k</b></span>
+                  <div class="track"><i style="width: 42%"></i></div>
+                </div>
+                <span class="status">On track</span>
+              </article>
+              <article class="campaign" data-status="completed" hidden>
+                <div class="campaign-name">
+                  <span class="number">04</span>
+                  <div>
+                    <span class="client">ALTO / SPRING EDITION</span>
+                    <h3>Form follows feeling</h3>
+                  </div>
+                </div>
+                <div class="progress">
+                  <span>Reach <b>113.5k</b></span>
+                  <div class="track"><i style="width: 100%"></i></div>
+                </div>
+                <span class="status complete">Completed</span>
+              </article>
+            </div>
+          </section>
+          <section class="milestone" id="milestone">
+            <div>
+              <p class="eyebrow">Next up · Sep 28</p>
+              <h2>Fieldwork creative review</h2>
+              <p>Final assets are ready for the client team to review.</p>
+            </div>
+            <a href="#fieldwork"
+              >See Fieldwork <span aria-hidden="true">↗</span></a
+            >
+          </section>
+        </div>
+      </main>
+    </div>
+    <script src="../app.js"></script>
+  </body>
+</html>
