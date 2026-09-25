@@ -2,6 +2,8 @@
 
 Design judgment and visual QA for coding agents working in real web repositories. The canonical implementation is this repository; no model provider is required.
 
+See [LUMENFIELD](showcase/lumenfield/README.md), an interactive exhibition site built with this workflow. Its `.design/` records the three-direction decision, tokens, motion, references, critique, and verified renders.
+
 ## Start in a web project
 
 Requires Node 20 or newer. Install dependencies in this repository with `npm ci` and Chromium once with `npx playwright install chromium`. Run the CLI by absolute path, or use `npm run design --` from this repository:

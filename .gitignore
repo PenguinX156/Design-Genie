@@ -1,4 +1,5 @@
 node_modules/
+**/dist/
 **/.design/captures/
 **/.design/baselines/
 **/.design/diffs/

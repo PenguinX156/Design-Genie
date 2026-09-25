@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0c0e" />
+    <meta name="description" content="Lumenfield is an interactive field guide to forms that do not exist yet." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" as="image" href="/images/glass-knot.png" />
+    <title>LUMENFIELD — Matter, rewritten by light.</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <header class="site-header">
+          <a class="wordmark" href="#top" aria-label="Lumenfield, back to top">LUMENFIELD</a>
+          <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">MENU</button>
+          <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+            <a href="#studies">WORK</a>
+            <a href="#process">PROCESS</a>
+            <a href="#about">ABOUT</a>
+          </nav>
+        </header>
+
+        <div class="hero-art" aria-hidden="true">
+          <img src="/images/glass-knot.png" alt="" width="1600" height="1030" fetchpriority="high" />
+        </div>
+
+        <div class="hero-content">
+          <h1 id="hero-title"><span>Matter,</span><span>rewritten</span><span>by light.</span></h1>
+          <p>An interactive field guide to forms that do not exist yet.</p>
+          <a class="text-link hero-link" href="#studies"><span>Explore the studies</span><svg viewBox="0 0 28 18" fill="none" aria-hidden="true"><path d="M1 9h24M18 2l7 7-7 7" stroke="currentColor" stroke-width="1.5"/></svg></a>
+        </div>
+
+        <div class="hero-bottom" aria-hidden="true">
+          <span>001 / 003</span>
+          <span class="scroll-cue"><span class="scroll-icon"><span></span></span>SCROLL</span>
+        </div>
+      </section>
+
+      <section class="studies" id="studies" aria-labelledby="studies-title">
+        <div class="section-line"></div>
+        <h2 id="studies-title" class="reveal">Three studies in the impossible.</h2>
+        <div class="studies-grid">
+          <div class="studies-copy reveal">
+            <div class="study-selector" aria-label="Choose a study">
+              <button class="study-option is-active" type="button" data-study="fold" aria-pressed="true"><span class="study-num">01</span><span>THE FOLD</span></button>
+              <button class="study-option" type="button" data-study="current" aria-pressed="false"><span class="study-num">02</span><span>THE CURRENT</span></button>
+              <button class="study-option" type="button" data-study="afterimage" aria-pressed="false"><span class="study-num">03</span><span>THE AFTERIMAGE</span></button>
+            </div>
+            <p class="study-description" id="study-description" aria-live="polite">A single surface bends until inside and outside become the same place.</p>
+          </div>
+
+          <div class="stage reveal" tabindex="0" role="img" aria-label="Interactive three-dimensional glass sculpture. Drag or use arrow keys to rotate it.">
+            <img class="stage-fallback" src="/images/glass-fold.png" alt="" loading="lazy" width="1536" height="1024" />
+            <canvas id="sculpture" aria-hidden="true"></canvas>
+            <span class="stage-hint" aria-hidden="true">DRAG TO ROTATE <span class="orbit-icon"><span></span></span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="finale" id="about" aria-labelledby="finale-title">
+        <div class="finale-art" aria-hidden="true"><img src="/images/glass-knot.png" alt="" loading="lazy" width="1600" height="1030" /></div>
+        <div class="finale-content reveal">
+          <h2 id="finale-title">Reality is only<br />a starting point.</h2>
+          <p>We shape digital matter into experiences you can feel.</p>
+        </div>
+        <div class="finale-bottom" id="process">
+          <div class="process-strip" aria-label="Our process">
+            <span><b>01</b> OBSERVE</span>
+            <span><b>02</b> DISTORT</span>
+            <span><b>03</b> FEEL</span>
+          </div>
+          <a class="text-link return-link" href="#top"><span>Return to the beginning</span><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 15 15 3M5 3h10v10" stroke="currentColor" stroke-width="1.4"/></svg></a>
+          <small>LUMENFIELD © 2026</small>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
