@@ -102,6 +102,32 @@ async function clippedMedia(page) {
   }));
 }
 
+async function canvasResolution(target) {
+  return target.evaluate(element => {
+    const canvases = element.matches('canvas') ? [element] : [...element.querySelectorAll('canvas')];
+    return canvases.map((canvas, index) => {
+      const box = canvas.getBoundingClientRect();
+      return {
+        index,
+        cssWidth: +box.width.toFixed(1), cssHeight: +box.height.toFixed(1),
+        pixelWidth: canvas.width, pixelHeight: canvas.height,
+        scaleX: box.width ? +(canvas.width / box.width).toFixed(2) : null,
+        scaleY: box.height ? +(canvas.height / box.height).toFixed(2) : null,
+        devicePixelRatio: window.devicePixelRatio
+      };
+    });
+  });
+}
+
+export function resolutionDrops(before, during, after) {
+  return during.filter((sample, index) => {
+    const reference = after[index] || before[index];
+    return reference && ['scaleX', 'scaleY'].some(axis =>
+      sample[axis] != null && reference[axis] != null && sample[axis] < reference[axis] * .85
+    );
+  }).map(sample => sample.index);
+}
+
 export async function probe(project, url, { selector, viewport = 'desktop', action = 'none', trigger, ready, warmReady, profileMs = 0 } = {}) {
   if (!selector) throw new Error('--selector is required for probe');
   if (!viewports[viewport]) throw new Error(`Unknown viewport: ${viewport}`);
@@ -113,6 +139,8 @@ export async function probe(project, url, { selector, viewport = 'desktop', acti
     const page = await pageAt(browser, url, viewports[viewport], profileMs > 0);
     const target = page.locator(selector).first();
     await target.scrollIntoViewIfNeeded();
+    if (action === 'drag' && trigger) await page.locator(trigger).first().click();
+    else if (action === 'drag' && warmReady && !(await page.locator(warmReady).first().isVisible())) await target.click();
     if (warmReady) await page.locator(warmReady).first().waitFor({ state: 'visible', timeout: 15000 });
     await target.evaluate(async element => {
       await Promise.all([...element.querySelectorAll('img')].map(img => img.decode().catch(() => {})));
@@ -122,23 +150,40 @@ export async function probe(project, url, { selector, viewport = 'desktop', acti
     const before = join(output, `${viewport}-before.png`);
     const after = join(output, `${viewport}-after.png`);
     await target.screenshot({ path: before, animations: 'disabled' });
+    const canvasBefore = action === 'drag' ? await canvasResolution(target) : null;
+    let during = null;
+    let canvasDuring = null;
     if (profileMs) await page.waitForTimeout(250);
-    if (profileMs) await startFrameProfile(page);
+    if (profileMs && action !== 'drag') await startFrameProfile(page);
     const interactionStart = Date.now();
-    if (trigger) await page.locator(trigger).first().click();
+    if (trigger && action !== 'drag') await page.locator(trigger).first().click();
     else if (action === 'click') await target.click();
     else if (action === 'drag') {
       await page.mouse.down();
       await page.mouse.move(dragBox.x + dragBox.width * .63, dragBox.y + dragBox.height * .56, { steps: 8 });
+      during = join(output, `${viewport}-during-drag.png`);
+      await target.screenshot({ path: during, animations: 'disabled' });
+      canvasDuring = await canvasResolution(target);
+      // Start profiling after the diagnostic screenshot so screenshot work is not mistaken for frame stutter.
+      if (profileMs) {
+        await startFrameProfile(page);
+        await page.mouse.move(dragBox.x + dragBox.width * .73, dragBox.y + dragBox.height * .62, { steps: 8 });
+      }
       await page.mouse.up();
     }
     if (ready) await page.locator(ready).first().waitFor({ state: 'visible', timeout: 10000 });
     const interactionMs = Date.now() - interactionStart;
     const frameProfile = await finishFrameProfile(page, profileMs);
     await target.screenshot({ path: after, animations: 'disabled' });
+    const canvasAfter = action === 'drag' ? await canvasResolution(target) : null;
     const comparison = join(output, `${viewport}-comparison.png`);
     comparisonImage(before, after, comparison);
-    const result = { url, selector, viewport, action, trigger: trigger || null, warmReady: warmReady || null, before, after, comparison, visualDelta: imageDelta(before, after), interactionMs, frameProfile, clippedMedia: await clippedMedia(page) };
+    const renderResolution = action === 'drag' ? {
+      before: canvasBefore, during: canvasDuring, after: canvasAfter,
+      droppedCanvasIndices: resolutionDrops(canvasBefore, canvasDuring, canvasAfter),
+      note: 'Canvas backing pixels per CSS pixel. Compare the during-drag image visually; scale alone cannot prove sharpness.'
+    } : null;
+    const result = { url, selector, viewport, action, trigger: trigger || null, warmReady: warmReady || null, before, during, after, comparison, visualDelta: imageDelta(before, after), renderResolution, interactionMs, frameProfile, clippedMedia: await clippedMedia(page) };
     writeFileSync(join(output, `${viewport}-probe.json`), JSON.stringify(result, null, 2) + '\n');
     await page.close();
     return result;
