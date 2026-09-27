@@ -2,10 +2,12 @@
 
 Use this when a still image advertises an object that later becomes interactive.
 
+For visually ambitious 3D, inspect the Lumenfield Fold's `showcase/lumenfield/design/final/live-first.png` and `live-study.jpg` as a local craft reference. Its textured helix, layered crossings, material response, and all-angle depth set the expected level of finish; the next project can have a different visual language. The rejected relief and simpler woven experiment are not reference models.
+
 ## Before implementation
 
 1. Describe the reference's topology: number of pieces, centerline, crossings, silhouette, thickness, and intended camera angle. Decide whether a real 3D mesh is available. A still image alone does not define the hidden surfaces. Do not treat a thickened still as a general substitute for a rotatable mesh.
-2. Record texture provenance and license. If the reference art is cleared for reuse, test a small UV crop on the actual geometry before building the full page. Check seams, back faces, mipmapping, highlights, and color space.
+2. Record texture provenance and license. If the reference art is cleared for reuse, test a small UV crop on the actual geometry before building the full page. Check seams, back faces, mipmapping, highlights, and color space. For glass, verify translucency, reflections, and gently perturbed surface normals under final lighting from front and rotated views.
 3. Make the 3D mesh authoritative and render its approved front view as the placeholder. Export separate placeholders for responsive camera changes. This guarantees the visitor initially rotates the object they saw. If art direction requires a supplied still, revise the model until its front silhouette and crossings agree before rendering that placeholder.
 
 ## Cheap review loop
@@ -19,7 +21,7 @@ Use this when a still image advertises an object that later becomes interactive.
 - The fallback is visible when WebGL is unavailable, texture loading fails, or the context is lost.
 - Pointer, touch, and keyboard input rotate the object without swallowing page navigation; reduced motion does not animate on its own.
 - The object and its shadows fit at desktop, tablet, and mobile widths. Treat `audit.clippedMedia` as a warning to inspect; mark deliberate crops with `data-crop-intentional`.
-- Bound pixel ratio, geometry count, shader cost, and animation work; pause rendering offscreen. Use one requestAnimationFrame loop, update rotation using elapsed time, and lower render resolution during interaction if necessary. Restore full resolution after motion settles. Measure slow devices separately when performance is material.
+- Bound pixel ratio, geometry count, shader cost, and animation work; pause rendering offscreen. Use one requestAnimationFrame loop and update rotation using elapsed time. Inspect sharpness during drag as well as at rest; a suddenly blurry or pixelated object fails the quality check. Measure slow devices separately when performance is material.
 
 ## Current tool limits
 

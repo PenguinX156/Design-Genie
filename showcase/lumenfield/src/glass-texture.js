@@ -39,3 +39,26 @@ export function createGlassTexture(referenceImage, region = [.24, .605, .44, .19
   else referenceImage?.addEventListener('load', paint, { once: true });
   return texture;
 }
+
+// Gently ripple vertex normals so the fixed lights move over the glass as it
+// turns. This costs no additional texture read in each rendered pixel.
+export function rippleGlassNormals(geometry) {
+  const normals = geometry.getAttribute('normal');
+  const uv = geometry.getAttribute('uv');
+  const normal = new THREE.Vector3();
+  const tangent = new THREE.Vector3();
+  const bitangent = new THREE.Vector3();
+  for (let i = 0; i < normals.count; i++) {
+    normal.fromBufferAttribute(normals, i);
+    tangent.set(-normal.y, normal.x, .17).normalize();
+    bitangent.crossVectors(normal, tangent).normalize();
+    const u = uv.getX(i);
+    const v = uv.getY(i);
+    const ripple = Math.sin(u * Math.PI * 34 + v * Math.PI * 6) * .045;
+    const crossRipple = Math.cos(u * Math.PI * 24 - v * Math.PI * 8) * .025;
+    normal.addScaledVector(tangent, ripple).addScaledVector(bitangent, crossRipple).normalize();
+    normals.setXYZ(i, normal.x, normal.y, normal.z);
+  }
+  normals.needsUpdate = true;
+  return geometry;
+}

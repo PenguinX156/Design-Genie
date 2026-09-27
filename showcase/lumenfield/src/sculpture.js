@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { createGlassTexture } from './glass-texture.js';
-import { createWovenFold } from './woven-fold.js';
+import { createGlassTexture, rippleGlassNormals } from './glass-texture.js';
 
 export async function createSculpture(stage, reducedMotion) {
   const canvas = stage.querySelector('canvas');
@@ -9,9 +8,7 @@ export async function createSculpture(stage, reducedMotion) {
   textureImage.src = '/images/glass-fold.png';
   await textureImage.decode().catch(() => {});
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: new URLSearchParams(location.search).has('render-preview') });
-  const restingPixelRatio = Math.min(window.devicePixelRatio || 1, 1);
-  let pixelRatio = restingPixelRatio;
-  renderer.setPixelRatio(pixelRatio);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.02;
@@ -35,26 +32,26 @@ export async function createSculpture(stage, reducedMotion) {
   let sceneInitialized = false;
   function render() {
     if (!sceneInitialized) return;
-    const key = activeKey();
-    sparks.visible = key !== 'woven';
     renderer.render(scene, camera);
   }
-  function glassMaterial(region, tint = 0xffffff) {
+  function glassMaterial(region, tint = 0xffffff, opacity = 1) {
     const map = createGlassTexture(textureImage, region, render);
     return new THREE.MeshPhysicalMaterial({
-      color: tint, map, metalness: .42, roughness: .07,
-      transmission: 0, thickness: .8, ior: 1.45,
-      iridescence: .5, iridescenceIOR: 1.3,
-      clearcoat: 1, clearcoatRoughness: .025,
-      envMapIntensity: .65, side: THREE.DoubleSide,
-      emissive: 0xffffff, emissiveMap: map, emissiveIntensity: .18
+      color: tint, map,
+      metalness: .08, roughness: .045, ior: 1.46,
+      iridescence: .25, iridescenceIOR: 1.3,
+      clearcoat: .7, clearcoatRoughness: .025,
+      envMapIntensity: 1.0, specularIntensity: 1,
+      transparent: opacity < 1, opacity,
+      side: THREE.FrontSide,
+      emissive: 0xffffff, emissiveMap: map, emissiveIntensity: .14
     });
   }
   const glass = glassMaterial([.24, .605, .44, .19]);
   const ember = glassMaterial([.14, .14, .45, .22], 0xffdcc8);
-  const ice = glassMaterial([.606, .343, .202, .353], 0xc8c5ff);
+  const ice = glassMaterial([.606, .343, .202, .353], 0xc8c5ff, .88);
   function mesh(geometry, material, rotation = [0, 0, 0], scale = 1) {
-    const item = new THREE.Mesh(geometry, material);
+    const item = new THREE.Mesh(rippleGlassNormals(geometry), material);
     item.rotation.set(...rotation);
     item.scale.setScalar(scale);
     return item;
@@ -65,63 +62,51 @@ export async function createSculpture(stage, reducedMotion) {
     current: new THREE.Group(),
     afterimage: new THREE.Group()
   };
-  forms.fold.add(mesh(new THREE.TorusKnotGeometry(1.29, .31, 280, 40, 2, 3), glass, [.27, -.16, .18]));
-  forms.fold.add(mesh(new THREE.TorusKnotGeometry(1.19, .22, 280, 28, 2, 3), ember, [.48, -.31, -.16], 1.08));
-  forms.fold.add(mesh(new THREE.TorusGeometry(1.28, .16, 24, 160), ice, [.82, .22, -.36], 1.12));
+  forms.fold.add(mesh(new THREE.TorusKnotGeometry(1.29, .31, 200, 28, 2, 3), glass, [.27, -.16, .18]));
+  forms.fold.add(mesh(new THREE.TorusKnotGeometry(1.19, .22, 200, 20, 2, 3), ember, [.48, -.31, -.16], 1.08));
+  forms.fold.add(mesh(new THREE.TorusGeometry(1.28, .16, 18, 120), ice, [.82, .22, -.36], 1.12));
   forms.current.add(mesh(new THREE.TorusKnotGeometry(1.18, .24, 360, 28, 3, 5), ember, [.38, .22, .2]));
   forms.current.add(mesh(new THREE.TorusKnotGeometry(1.34, .19, 360, 28, 3, 5), ice, [.38, .22, .2]));
   forms.current.add(mesh(new THREE.TorusGeometry(1.2, .12, 18, 150), glass, [-.4, .4, .3]));
   forms.afterimage.add(mesh(new THREE.TorusKnotGeometry(1.21, .27, 260, 32, 2, 5), glass, [.33, .12, -.16]));
   forms.afterimage.add(mesh(new THREE.TorusKnotGeometry(1.21, .1, 260, 18, 2, 5), ember, [.38, .2, -.1], 1.16));
   forms.afterimage.add(mesh(new THREE.TorusGeometry(1.47, .09, 20, 180), ice, [.73, -.2, .2]));
-  Object.values(forms).forEach(group => group.rotation.set(.1, -.3, .05));
-  const wovenMap = createGlassTexture(textureImage, [.11, .08, .76, .79], render);
-  forms.woven = createWovenFold(new THREE.MeshPhongMaterial({
-    map: wovenMap, shininess: 85, specular: 0xaaa6dd,
-    emissive: 0xffffff, emissiveMap: wovenMap, emissiveIntensity: .16,
-    side: THREE.DoubleSide
-  }));
   const pivot = new THREE.Group();
   Object.values(forms).forEach(group => pivot.add(group));
+  pivot.rotation.set(.1, -.3, .05);
   scene.add(pivot);
 
   const sparks = new THREE.Group();
   const sparkGeometry = new THREE.SphereGeometry(1, 8, 8);
   const sparkMaterials = [new THREE.MeshBasicMaterial({ color: 0xff6033 }), new THREE.MeshBasicMaterial({ color: 0xc8c3ff })];
-  for (let i = 0; i < 30; i++) {
+  const sparkMeshes = sparkMaterials.map(material => new THREE.InstancedMesh(sparkGeometry, material, 22));
+  const sparkTransform = new THREE.Object3D();
+  for (let i = 0; i < 44; i++) {
     const theta = i * 2.399963229728653;
     const distance = 1.95 + (i % 7) * .18;
-    const spark = new THREE.Mesh(sparkGeometry, sparkMaterials[i % 2]);
-    spark.position.set(Math.cos(theta) * distance, Math.sin(theta) * distance * .71, ((i * 13) % 17) / 17 - .5);
-    spark.scale.setScalar(.014 + (i % 5) * .006);
-    sparks.add(spark);
+    sparkTransform.position.set(Math.cos(theta) * distance, Math.sin(theta) * distance * .71, ((i * 13) % 17) / 17 - .5);
+    sparkTransform.scale.setScalar(.014 + (i % 5) * .006);
+    sparkTransform.updateMatrix();
+    sparkMeshes[i % 2].setMatrixAt(Math.floor(i / 2), sparkTransform.matrix);
   }
+  sparkMeshes.forEach(spark => { spark.instanceMatrix.needsUpdate = true; sparks.add(spark); });
   scene.add(sparks);
 
   let visible = false;
   let activeStudy = 'fold';
-  let model = 'woven';
   let frame = 0;
   let previous = 0;
   let pointer = null;
-  let targetX = 0;
-  let targetY = 0;
+  let targetX = .1;
+  let targetY = -.3;
   let velocityX = 0;
   let velocityY = 0;
-  const activeKey = () => activeStudy === 'fold' && model === 'woven' ? 'woven' : activeStudy;
-  function setResolution(next) {
-    if (pixelRatio === next) return;
-    pixelRatio = next;
-    renderer.setPixelRatio(pixelRatio);
-    const { width, height } = stage.getBoundingClientRect();
-    if (width && height) renderer.setSize(width, height, false);
-  }
   function resize() {
     const { width, height } = stage.getBoundingClientRect();
     if (!width || !height) return;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
-    camera.position.z = width < 600 ? 8.45 : 6.4;
+    camera.position.z = width < 600 ? 7 : 6.4;
     camera.updateProjectionMatrix();
     render();
   }
@@ -165,7 +150,6 @@ export async function createSculpture(stage, reducedMotion) {
     render();
     const moving = Math.abs(targetX - pivot.rotation.x) + Math.abs(targetY - pivot.rotation.y) > .0008;
     if (moving || (!reducedMotion.matches && Math.abs(velocityX) + Math.abs(velocityY) > .015)) schedule();
-    else if (!pointer && pixelRatio !== restingPixelRatio) { setResolution(restingPixelRatio); render(); }
   }
   function setVisible(next) {
     visible = next;
@@ -173,23 +157,16 @@ export async function createSculpture(stage, reducedMotion) {
     else if (frame) { cancelAnimationFrame(frame); frame = 0; previous = 0; }
   }
   function showActive() {
-    const key = activeKey();
-    Object.entries(forms).forEach(([name, group]) => { group.visible = name === key; });
+    Object.entries(forms).forEach(([name, group]) => { group.visible = name === activeStudy; });
     render();
     schedule();
   }
   function setStudy(name) {
-    if (!(name in forms) || name === 'woven') return;
+    if (!(name in forms)) return;
     activeStudy = name;
     showActive();
   }
-  function setModel(next) {
-    model = next === 'woven' ? 'woven' : 'helix';
-    showActive();
-    return model;
-  }
   function rotateBy(dx, dy) {
-    if (!reducedMotion.matches) setResolution(Math.min(restingPixelRatio, .4));
     targetY += dx * .0035;
     targetX += dy * .0035;
     if (!reducedMotion.matches) {
@@ -199,7 +176,6 @@ export async function createSculpture(stage, reducedMotion) {
     schedule();
   }
   stage.addEventListener('pointerdown', event => {
-    if (!reducedMotion.matches) setResolution(Math.min(restingPixelRatio, .4));
     pointer = { x: event.clientX, y: event.clientY };
     velocityX = 0;
     velocityY = 0;
@@ -222,5 +198,5 @@ export async function createSculpture(stage, reducedMotion) {
   sceneInitialized = true;
   showActive();
   resize();
-  return { setStudy, setModel, setVisible, rotateBy };
+  return { setStudy, setVisible, rotateBy };
 }

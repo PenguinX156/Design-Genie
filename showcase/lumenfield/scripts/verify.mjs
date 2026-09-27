@@ -47,13 +47,6 @@ try {
   const desktopLive = await stage.screenshot({ path: join(output, 'live-first.png'), animations: 'disabled' });
   assert.ok(changedPercent(desktopPreview, desktopLive) < 5, 'Desktop preview must match the first 3D frame');
   const canvas = stage.locator('canvas');
-  const wovenDigest = digest(await canvas.screenshot());
-  await desktop.getByRole('button', { name: 'ORIGINAL HELIX' }).click();
-  assert.equal(await desktop.getByRole('button', { name: 'ORIGINAL HELIX' }).getAttribute('aria-pressed'), 'true');
-  assert.notEqual(digest(await canvas.screenshot()), wovenDigest, 'Original helix must remain available');
-  await stage.screenshot({ path: join(output, 'original-helix.png'), animations: 'disabled' });
-  await desktop.getByRole('button', { name: 'WOVEN FOLD' }).click();
-  assert.equal(await desktop.getByRole('button', { name: 'WOVEN FOLD' }).getAttribute('aria-pressed'), 'true');
   await desktop.getByRole('button', { name: '02 THE CURRENT' }).click();
   assert.ok(await stage.locator('canvas').evaluate(canvas => canvas.width > 0));
   await desktop.getByText('A restless current gives invisible forces a shape you can almost touch.').waitFor();
@@ -72,6 +65,24 @@ try {
   await desktop.locator('.studies').screenshot({ path: join(output, 'live-study.jpg'), type: 'jpeg', quality: 88 });
   assert.deepEqual(errors, []);
   await desktop.close();
+
+  const sharpDrag = await browser.newPage({ viewport: { width: 900, height: 700 }, deviceScaleFactor: 2, reducedMotion: 'reduce' });
+  await sharpDrag.goto(url, { waitUntil: 'networkidle' });
+  const sharpStage = sharpDrag.locator('.stage');
+  await sharpStage.scrollIntoViewIfNeeded();
+  await sharpStage.click();
+  await sharpDrag.locator('.stage.is-ready').waitFor();
+  const resolution = () => sharpStage.locator('canvas').evaluate(canvas => ({ pixels: canvas.width, css: canvas.getBoundingClientRect().width }));
+  const sharpBefore = await resolution();
+  const sharpBox = await sharpStage.boundingBox();
+  await sharpDrag.mouse.move(sharpBox.x + sharpBox.width * .4, sharpBox.y + sharpBox.height * .5);
+  await sharpDrag.mouse.down();
+  await sharpDrag.mouse.move(sharpBox.x + sharpBox.width * .6, sharpBox.y + sharpBox.height * .5, { steps: 3 });
+  const sharpDuring = await resolution();
+  await sharpDrag.mouse.up();
+  assert.ok(sharpDuring.pixels / sharpDuring.css >= 1.45, 'Drag must retain the high-DPI render resolution');
+  assert.equal(sharpDuring.pixels, sharpBefore.pixels, 'Drag must not downscale the canvas');
+  await sharpDrag.close();
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   await mobile.goto(url, { waitUntil: 'networkidle' });
@@ -94,7 +105,7 @@ try {
   assert.ok(changedPercent(mobilePreview, mobileLive) < 5, 'Mobile preview must match the first 3D frame');
   await mobile.close();
 
-  console.log(`Verified model-derived preview parity, original helix, desktop/mobile WebGL, drag, three study states, navigation, mobile menu, and no horizontal overflow. Screenshots: ${output}`);
+  console.log(`Verified model-derived preview parity, sharp high-DPI dragging, desktop/mobile WebGL, three study states, navigation, mobile menu, and no horizontal overflow. Screenshots: ${output}`);
 } finally {
   await browser.close();
 }
