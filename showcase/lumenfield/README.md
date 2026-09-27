@@ -12,8 +12,8 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite. Use the study selector and drag the live sculpture to explore the forms. `npm run build` creates a production bundle. `npm run verify:ui` exercises the interaction path and saves desktop, mobile, native-concept-size, and live-study screenshots in `design/final/`.
+Open the local URL printed by Vite. Use the study selector and drag the live sculpture to explore the forms. `npm run build` creates a production bundle. `npm run verify:ui` exercises the interaction path and saves desktop, mobile, fallback, first live frame, rotated, and mobile live screenshots in `design/final/`.
 
-From the repository root, run `npm run design -- capture --project showcase/lumenfield --url http://localhost:5173` and `npm run design -- audit --project showcase/lumenfield --url http://localhost:5173` for Design Genie review.
+From the repository root, run `npm run design -- probe --project showcase/lumenfield --url http://localhost:5173/ --selector .stage --action drag --ready .stage.is-ready` for a focused fallback/live comparison. Run `npm run design -- capture --project showcase/lumenfield --url http://localhost:5173` and `npm run design -- audit --project showcase/lumenfield --url http://localhost:5173` for final three-viewport review.
 
 The visual artwork was generated for this project. Three.js is MIT licensed; Libre Bodoni and Space Grotesk are SIL OFL. See `.design/REFERENCES.md` and `.design/REVIEW.md`.

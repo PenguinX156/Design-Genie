@@ -3,6 +3,7 @@ node_modules/
 **/.design/captures/
 **/.design/baselines/
 **/.design/diffs/
+**/.design/probes/
 playwright-report/
 test-results/
 .DS_Store

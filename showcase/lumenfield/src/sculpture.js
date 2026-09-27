@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { createGlassTexture } from './glass-texture.js';
 
 export function createSculpture(stage, reducedMotion) {
   const canvas = stage.querySelector('canvas');
@@ -7,7 +8,7 @@ export function createSculpture(stage, reducedMotion) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = 1.02;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(42, 1, .1, 100);
@@ -18,35 +19,31 @@ export function createSculpture(stage, reducedMotion) {
   scene.environment = environment.texture;
 
   scene.add(new THREE.AmbientLight(0x77718b, .22));
-  const orange = new THREE.PointLight(0xff5a23, 115, 14, 2);
+  const orange = new THREE.PointLight(0xff5a23, 65, 14, 2);
   orange.position.set(-2.4, .8, 3.2);
   scene.add(orange);
-  const lavender = new THREE.PointLight(0xb9acff, 65, 14, 2);
+  const lavender = new THREE.PointLight(0xb9acff, 40, 14, 2);
   lavender.position.set(2.4, 1.7, 2.8);
   scene.add(lavender);
   const white = new THREE.PointLight(0xffffff, 9, 12, 2);
   white.position.set(0, -2.4, 4);
   scene.add(white);
 
-  const glass = new THREE.MeshPhysicalMaterial({
-    color: 0x251d3c, metalness: .92, roughness: .06,
-    transmission: 0, thickness: 1.25, ior: 1.4,
-    iridescence: .65, iridescenceIOR: 1.3,
-    clearcoat: 1, clearcoatRoughness: .03,
-    envMapIntensity: .85, side: THREE.DoubleSide
-  });
-  const ember = new THREE.MeshPhysicalMaterial({
-    color: 0xa3310b, metalness: .82, roughness: .065,
-    transmission: 0, thickness: .8, ior: 1.45,
-    iridescence: .45, clearcoat: 1,
-    envMapIntensity: 1.4, side: THREE.DoubleSide
-  });
-  const ice = new THREE.MeshPhysicalMaterial({
-    color: 0x584d9d, metalness: .88, roughness: .06,
-    transmission: 0, thickness: .7, ior: 1.4,
-    iridescence: 1, clearcoat: 1,
-    envMapIntensity: 1.15, side: THREE.DoubleSide
-  });
+  const referenceImage = stage.querySelector('.stage-fallback');
+  function glassMaterial(region, tint = 0xffffff) {
+    const map = createGlassTexture(referenceImage, region, render);
+    return new THREE.MeshPhysicalMaterial({
+      color: tint, map, metalness: .42, roughness: .07,
+      transmission: 0, thickness: .8, ior: 1.45,
+      iridescence: .5, iridescenceIOR: 1.3,
+      clearcoat: 1, clearcoatRoughness: .025,
+      envMapIntensity: .65, side: THREE.DoubleSide,
+      emissive: 0xffffff, emissiveMap: map, emissiveIntensity: .18
+    });
+  }
+  const glass = glassMaterial([.24, .605, .44, .19]);
+  const ember = glassMaterial([.14, .14, .45, .22], 0xffdcc8);
+  const ice = glassMaterial([.606, .343, .202, .353], 0xc8c5ff);
 
   function mesh(geometry, material, rotation = [0, 0, 0], scale = 1) {
     const item = new THREE.Mesh(geometry, material);
@@ -114,6 +111,18 @@ export function createSculpture(stage, reducedMotion) {
   function render() { renderer.render(scene, camera); }
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(stage);
+  let visibleBeforeContextLoss = false;
+  canvas.addEventListener('webglcontextlost', event => {
+    event.preventDefault();
+    visibleBeforeContextLoss = visible;
+    setVisible(false);
+    stage.classList.remove('is-ready');
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    resize();
+    stage.classList.add('is-ready');
+    setVisible(visibleBeforeContextLoss);
+  });
 
   function tick(time) {
     if (!visible) { frame = 0; return; }
@@ -161,7 +170,6 @@ export function createSculpture(stage, reducedMotion) {
       transition = null;
       Object.entries(forms).forEach(([key, group]) => { group.visible = key === name; group.scale.setScalar(1); });
     }
-    pivot.rotation.y += .28;
     render();
   }
 
@@ -174,13 +182,16 @@ export function createSculpture(stage, reducedMotion) {
     if (!pointer) return;
     const dx = event.clientX - pointer.x;
     const dy = event.clientY - pointer.y;
+    rotateBy(dx, dy);
+    pointer = { x: event.clientX, y: event.clientY };
+  });
+  function rotateBy(dx, dy) {
     pivot.rotation.y += dx * .008;
     pivot.rotation.x += dy * .008;
     velocityX = dx * .0004;
     velocityY = dy * .0004;
-    pointer = { x: event.clientX, y: event.clientY };
     render();
-  });
+  }
   const release = () => { pointer = null; stage.classList.remove('is-dragging'); };
   stage.addEventListener('pointerup', release);
   stage.addEventListener('pointercancel', release);
@@ -196,5 +207,5 @@ export function createSculpture(stage, reducedMotion) {
 
   setStudy(active);
   resize();
-  return { setStudy, setVisible };
+  return { setStudy, setVisible, rotateBy };
 }

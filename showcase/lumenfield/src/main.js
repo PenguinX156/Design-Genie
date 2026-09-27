@@ -19,6 +19,8 @@ let sculpture = null;
 let sculpturePromise = null;
 let selectedStudy = 'fold';
 let stageVisible = false;
+let pendingDrag = null;
+const queuedRotation = { dx: 0, dy: 0 };
 
 async function ensureSculpture() {
   if (sculpture) return sculpture;
@@ -26,7 +28,10 @@ async function ensureSculpture() {
   sculpturePromise = import('./sculpture.js').then(({ createSculpture }) => {
     sculpture = createSculpture(stage, reducedMotion);
     sculpture.setStudy(selectedStudy);
-    sculpture.setVisible(stageVisible);
+    sculpture.setVisible(stageVisible && stage.classList.contains('is-engaged'));
+    sculpture.rotateBy(queuedRotation.dx, queuedRotation.dy);
+    queuedRotation.dx = 0;
+    queuedRotation.dy = 0;
     stage.classList.add('is-ready');
     return sculpture;
   }).catch(error => {
@@ -39,9 +44,28 @@ async function ensureSculpture() {
 
 const engageStage = () => {
   stage.classList.add('is-engaged');
-  if (stageVisible) void ensureSculpture();
+  if (sculpture) sculpture.setVisible(stageVisible);
+  else if (stageVisible) void ensureSculpture();
 };
-stage.addEventListener('pointerdown', engageStage);
+stage.addEventListener('pointerdown', event => {
+  if (!sculpture) {
+    pendingDrag = { x: event.clientX, y: event.clientY };
+    stage.setPointerCapture(event.pointerId);
+  }
+  engageStage();
+});
+stage.addEventListener('pointermove', event => {
+  if (!pendingDrag) return;
+  const dx = event.clientX - pendingDrag.x;
+  const dy = event.clientY - pendingDrag.y;
+  pendingDrag.x = event.clientX;
+  pendingDrag.y = event.clientY;
+  if (sculpture) sculpture.rotateBy(dx, dy);
+  else { queuedRotation.dx += dx; queuedRotation.dy += dy; }
+});
+const finishPendingDrag = () => { pendingDrag = null; };
+stage.addEventListener('pointerup', finishPendingDrag);
+stage.addEventListener('pointercancel', finishPendingDrag);
 stage.addEventListener('keydown', event => {
   if (event.key.startsWith('Arrow')) engageStage();
 });
@@ -108,6 +132,6 @@ if (!reducedMotion.matches && window.matchMedia('(pointer:fine)').matches) {
 const stageObserver = new IntersectionObserver(entries => {
   stageVisible = entries[0].isIntersecting;
   if (stageVisible && (!reducedMotion.matches || stage.classList.contains('is-engaged'))) void ensureSculpture();
-  sculpture?.setVisible(stageVisible);
+  sculpture?.setVisible(stageVisible && stage.classList.contains('is-engaged'));
 }, { rootMargin: '220px 0px' });
 stageObserver.observe(stage);
