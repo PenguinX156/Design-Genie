@@ -4,14 +4,14 @@ Use this when a still image advertises an object that later becomes interactive.
 
 ## Before implementation
 
-1. Describe the reference's topology: number of pieces, centerline, crossings, silhouette, thickness, and intended camera angle. Decide whether a real 3D mesh is available. A still image alone does not define the hidden surfaces.
+1. Describe the reference's topology: number of pieces, centerline, crossings, silhouette, thickness, and intended camera angle. Decide whether a real 3D mesh is available. A still image alone does not define the hidden surfaces. Do not treat a thickened still as a general substitute for a rotatable mesh.
 2. Record texture provenance and license. If the reference art is cleared for reuse, test a small UV crop on the actual geometry before building the full page. Check seams, back faces, mipmapping, highlights, and color space.
-3. Match the first live frame's apparent size, camera, lighting, and palette to the still. If the shapes differ, choose a still from the model or revise the model; a smooth fade does not resolve a shape mismatch.
+3. Make the 3D mesh authoritative and render its approved front view as the placeholder. Export separate placeholders for responsive camera changes. This guarantees the visitor initially rotates the object they saw. If art direction requires a supplied still, revise the model until its front silhouette and crossings agree before rendering that placeholder.
 
 ## Cheap review loop
 
 1. Run one `design probe` on the 3D stage with `--action click --ready <ready-selector>`. Open the generated `*-comparison.png` and compare left (rest) with right (first live frame).
-2. Run one `--action drag` probe to inspect a rotated view. Check the first gesture before lazy WebGL finishes, not only later drags.
+2. Run one `--action drag` probe to inspect a rotated view. Check the first gesture before lazy WebGL finishes, not only later drags. Run a warmed motion probe with `--warm-ready <ready-selector> --profile-ms 900`; read p50/p95 and long frames, then test on actual hardware.
 3. Batch material and geometry changes. Reprobe only the changed state. Use `design capture` and `design audit` across three viewports after the focused comparison passes.
 
 ## Release checks
@@ -19,8 +19,8 @@ Use this when a still image advertises an object that later becomes interactive.
 - The fallback is visible when WebGL is unavailable, texture loading fails, or the context is lost.
 - Pointer, touch, and keyboard input rotate the object without swallowing page navigation; reduced motion does not animate on its own.
 - The object and its shadows fit at desktop, tablet, and mobile widths. Treat `audit.clippedMedia` as a warning to inspect; mark deliberate crops with `data-crop-intentional`.
-- Bound pixel ratio, geometry count, and animation work; pause rendering offscreen. Measure slow devices separately when performance is material.
+- Bound pixel ratio, geometry count, shader cost, and animation work; pause rendering offscreen. Use one requestAnimationFrame loop, update rotation using elapsed time, and lower render resolution during interaction if necessary. Restore full resolution after motion settles. Measure slow devices separately when performance is material.
 
 ## Current tool limits
 
-The probe makes visual comparisons cheap but does not determine whether two images depict the same shape. The clipping check uses DOM element bounds, not image alpha bounds. The CLI does not create a 3D mesh from a still, measure GPU frame time, or emulate hardware context failure. Agents must inspect the paired screenshots and perform device testing for those cases.
+The probe reports pixel difference and browser frame intervals, but cannot determine whether two images depict the same shape or measure GPU frame time. The clipping check uses DOM element bounds, not image alpha bounds. The CLI does not create a 3D mesh from a still or emulate hardware context failure. Agents must inspect paired screenshots, rotated views, and motion on a real device.

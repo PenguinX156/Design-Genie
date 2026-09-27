@@ -12,9 +12,9 @@ export const viewports = {
 };
 
 function designDir(project, name) { const path = join(project, '.design', name); mkdirSync(path, { recursive: true }); return path; }
-async function pageAt(browser, url, viewport) {
+async function pageAt(browser, url, viewport, profileMotion = false) {
   const mobile = viewport.width < 500;
-  const page = await browser.newPage({ viewport, deviceScaleFactor: 1, isMobile: mobile, hasTouch: mobile, reducedMotion: 'reduce' });
+  const page = await browser.newPage({ viewport, deviceScaleFactor: 1, isMobile: mobile, hasTouch: mobile, reducedMotion: profileMotion ? 'no-preference' : 'reduce' });
   const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
   await page.evaluate(() => document.fonts.ready);
   if (!response || response.status() >= 400) throw new Error(`Page returned ${response?.status() ?? 'no response'}: ${url}`);
@@ -34,6 +34,48 @@ function comparisonImage(before, after, file) {
     }
   }
   writeFileSync(file, PNG.sync.write(image));
+}
+
+function imageDelta(before, after) {
+  const left = PNG.sync.read(readFileSync(before));
+  const right = PNG.sync.read(readFileSync(after));
+  if (left.width !== right.width || left.height !== right.height) return { dimensionMismatch: true };
+  const pixels = left.width * left.height;
+  const changed = pixelmatch(left.data, right.data, null, left.width, left.height, { threshold: .1 });
+  return { changedPixels: changed, totalPixels: pixels, changedPercent: +(100 * changed / pixels).toFixed(2) };
+}
+
+async function startFrameProfile(page) {
+  await page.evaluate(() => {
+    const samples = [];
+    const longTasks = [];
+    let last = 0;
+    let active = true;
+    const observer = new PerformanceObserver(list => {
+      for (const entry of list.getEntries()) longTasks.push({ startMs: Math.round(entry.startTime), durationMs: Math.round(entry.duration) });
+    });
+    try { observer.observe({ type: 'longtask', buffered: false }); } catch { /* Not every browser exposes long tasks. */ }
+    function sample(now) {
+      if (!active) return;
+      if (last) samples.push(now - last);
+      last = now;
+      requestAnimationFrame(sample);
+    }
+    requestAnimationFrame(sample);
+    window.__designFrameProfile = { samples, longTasks, stop: () => { active = false; observer.disconnect(); } };
+  });
+}
+
+async function finishFrameProfile(page, durationMs) {
+  if (!durationMs) return null;
+  await page.waitForTimeout(durationMs);
+  return page.evaluate(() => {
+    const profile = window.__designFrameProfile;
+    profile.stop();
+    const samples = profile.samples.slice().sort((a, b) => a - b);
+    const percentile = fraction => +(samples[Math.min(samples.length - 1, Math.floor((samples.length - 1) * fraction))] || 0).toFixed(1);
+    return { frames: samples.length, p50Ms: percentile(.5), p95Ms: percentile(.95), worstMs: percentile(1), over32ms: samples.filter(ms => ms > 32).length, longTasks: profile.longTasks, note: 'Browser frame intervals during and after the interaction; inspect visual motion on a real device for final judgment.' };
+  });
 }
 
 async function clippedMedia(page) {
@@ -60,36 +102,43 @@ async function clippedMedia(page) {
   }));
 }
 
-export async function probe(project, url, { selector, viewport = 'desktop', action = 'none', trigger, ready } = {}) {
+export async function probe(project, url, { selector, viewport = 'desktop', action = 'none', trigger, ready, warmReady, profileMs = 0 } = {}) {
   if (!selector) throw new Error('--selector is required for probe');
   if (!viewports[viewport]) throw new Error(`Unknown viewport: ${viewport}`);
   if (!['none', 'click', 'drag'].includes(action)) throw new Error(`Unknown action: ${action}`);
+  if (!Number.isInteger(profileMs) || profileMs < 0 || profileMs > 10000) throw new Error('--profile-ms must be an integer from 0 to 10000');
   const output = designDir(project, 'probes');
   const browser = await chromium.launch();
   try {
-    const page = await pageAt(browser, url, viewports[viewport]);
+    const page = await pageAt(browser, url, viewports[viewport], profileMs > 0);
     const target = page.locator(selector).first();
     await target.scrollIntoViewIfNeeded();
+    if (warmReady) await page.locator(warmReady).first().waitFor({ state: 'visible', timeout: 15000 });
     await target.evaluate(async element => {
       await Promise.all([...element.querySelectorAll('img')].map(img => img.decode().catch(() => {})));
     });
+    const dragBox = action === 'drag' ? await target.boundingBox() : null;
+    if (dragBox) await page.mouse.move(dragBox.x + dragBox.width * .45, dragBox.y + dragBox.height * .5);
     const before = join(output, `${viewport}-before.png`);
     const after = join(output, `${viewport}-after.png`);
     await target.screenshot({ path: before, animations: 'disabled' });
+    if (profileMs) await page.waitForTimeout(250);
+    if (profileMs) await startFrameProfile(page);
+    const interactionStart = Date.now();
     if (trigger) await page.locator(trigger).first().click();
     else if (action === 'click') await target.click();
     else if (action === 'drag') {
-      const box = await target.boundingBox();
-      await page.mouse.move(box.x + box.width * .45, box.y + box.height * .5);
       await page.mouse.down();
-      await page.mouse.move(box.x + box.width * .63, box.y + box.height * .56, { steps: 8 });
+      await page.mouse.move(dragBox.x + dragBox.width * .63, dragBox.y + dragBox.height * .56, { steps: 8 });
       await page.mouse.up();
     }
     if (ready) await page.locator(ready).first().waitFor({ state: 'visible', timeout: 10000 });
+    const interactionMs = Date.now() - interactionStart;
+    const frameProfile = await finishFrameProfile(page, profileMs);
     await target.screenshot({ path: after, animations: 'disabled' });
     const comparison = join(output, `${viewport}-comparison.png`);
     comparisonImage(before, after, comparison);
-    const result = { url, selector, viewport, action, trigger: trigger || null, before, after, comparison, clippedMedia: await clippedMedia(page) };
+    const result = { url, selector, viewport, action, trigger: trigger || null, warmReady: warmReady || null, before, after, comparison, visualDelta: imageDelta(before, after), interactionMs, frameProfile, clippedMedia: await clippedMedia(page) };
     writeFileSync(join(output, `${viewport}-probe.json`), JSON.stringify(result, null, 2) + '\n');
     await page.close();
     return result;

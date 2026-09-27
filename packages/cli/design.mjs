@@ -32,12 +32,13 @@ try {
       const mod = await import('../visual-audit/browser.mjs');
       print(await mod.probe(project, url, {
         selector: option('selector'), viewport: option('viewport', 'desktop'),
-        action: option('action', 'none'), trigger: option('trigger'), ready: option('ready')
+        action: option('action', 'none'), trigger: option('trigger'), ready: option('ready'), warmReady: option('warm-ready'),
+        profileMs: Number(option('profile-ms', 0))
       }));
       break;
     }
     case 'baseline': print((await import('../visual-audit/browser.mjs')).saveBaseline(project)); break;
     case 'diff': print((await import('../visual-audit/browser.mjs')).diffBaseline(project)); break;
-    default: print('Usage: design <scan|init|directions|resources|probe|capture|audit|critique|baseline|diff> [--project PATH] [--url URL] [--query TEXT] [--selector CSS] [--viewport desktop|tablet|mobile] [--action none|click|drag] [--trigger CSS] [--ready CSS]'); process.exitCode = command ? 1 : 0;
+    default: print('Usage: design <scan|init|directions|resources|probe|capture|audit|critique|baseline|diff> [--project PATH] [--url URL] [--query TEXT] [--selector CSS] [--viewport desktop|tablet|mobile] [--action none|click|drag] [--trigger CSS] [--ready CSS] [--warm-ready CSS] [--profile-ms 1200]'); process.exitCode = command ? 1 : 0;
   }
 } catch (error) { console.error(error.message); process.exitCode = 1; }

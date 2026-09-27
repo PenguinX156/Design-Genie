@@ -50,10 +50,15 @@
               <button class="study-option" type="button" data-study="afterimage" aria-pressed="false"><span class="study-num">03</span><span>THE AFTERIMAGE</span></button>
             </div>
             <p class="study-description" id="study-description" aria-live="polite">A single surface bends until inside and outside become the same place.</p>
+            <div class="model-switch" role="group" aria-label="Fold model">
+              <span class="model-switch-label" aria-hidden="true">FORM</span>
+                <button class="model-option is-active" type="button" data-model="woven" aria-pressed="true">WOVEN FOLD</button>
+              <button class="model-option" type="button" data-model="helix" aria-pressed="false">ORIGINAL HELIX</button>
+            </div>
           </div>
 
           <div class="stage reveal" tabindex="0" role="img" aria-label="Interactive three-dimensional glass sculpture. Drag or use arrow keys to rotate it.">
-            <img class="stage-fallback" src="/images/glass-fold.png" alt="" loading="lazy" width="1536" height="1024" />
+              <picture class="stage-fallback"><source media="(max-width: 700px)" srcset="/images/woven-fold-preview-mobile.png" /><img src="/images/woven-fold-preview.png" alt="" loading="lazy" width="878" height="662" /></picture>
             <canvas id="sculpture" aria-hidden="true"></canvas>
             <span class="stage-hint" aria-hidden="true">DRAG TO ROTATE <span class="orbit-icon"><span></span></span></span>
           </div>

@@ -8,6 +8,8 @@ const nav = document.querySelector('.site-nav');
 const stage = document.querySelector('.stage');
 const description = document.querySelector('#study-description');
 const options = [...document.querySelectorAll('.study-option')];
+const modelSwitch = document.querySelector('.model-switch');
+const modelOptions = [...document.querySelectorAll('.model-option')];
 
 const descriptions = {
   fold: 'A single surface bends until inside and outside become the same place.',
@@ -18,6 +20,7 @@ const descriptions = {
 let sculpture = null;
 let sculpturePromise = null;
 let selectedStudy = 'fold';
+let selectedModel = 'woven';
 let stageVisible = false;
 let pendingDrag = null;
 const queuedRotation = { dx: 0, dy: 0 };
@@ -25,9 +28,11 @@ const queuedRotation = { dx: 0, dy: 0 };
 async function ensureSculpture() {
   if (sculpture) return sculpture;
   if (sculpturePromise) return sculpturePromise;
-  sculpturePromise = import('./sculpture.js').then(({ createSculpture }) => {
-    sculpture = createSculpture(stage, reducedMotion);
+  sculpturePromise = import('./sculpture.js').then(async ({ createSculpture }) => {
+    sculpture = await createSculpture(stage, reducedMotion);
     sculpture.setStudy(selectedStudy);
+    selectedModel = sculpture.setModel(selectedModel);
+    updateModelSwitch();
     sculpture.setVisible(stageVisible && stage.classList.contains('is-engaged'));
     sculpture.rotateBy(queuedRotation.dx, queuedRotation.dy);
     queuedRotation.dx = 0;
@@ -47,6 +52,23 @@ const engageStage = () => {
   if (sculpture) sculpture.setVisible(stageVisible);
   else if (stageVisible) void ensureSculpture();
 };
+function updateModelSwitch() {
+  modelSwitch.hidden = selectedStudy !== 'fold';
+  modelOptions.forEach(button => {
+    const active = button.dataset.model === selectedModel;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+}
+modelOptions.forEach(button => button.addEventListener('click', () => {
+  selectedModel = button.dataset.model;
+  updateModelSwitch();
+  engageStage();
+  if (sculpture) {
+    selectedModel = sculpture.setModel(selectedModel);
+    updateModelSwitch();
+  }
+}));
 stage.addEventListener('pointerdown', event => {
   if (!sculpture) {
     pendingDrag = { x: event.clientX, y: event.clientY };
@@ -89,6 +111,7 @@ options.forEach(option => {
     const next = option.dataset.study;
     if (next === selectedStudy) return;
     selectedStudy = next;
+    updateModelSwitch();
     options.forEach(button => {
       const active = button === option;
       button.classList.toggle('is-active', active);

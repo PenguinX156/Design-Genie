@@ -15,7 +15,7 @@
 | Hero composition | Giant serif left, glass knot right, dark negative space | `concept-native.jpg` and `desktop.jpg` match the split composition; art shifted clear of desktop nav and copy after first render. |
 | Typography | Didone display and spaced UI chrome | Libre Bodoni and Space Grotesk self-hosted; sizes adjusted after render review; mobile line breaks match intent. |
 | Color and image treatment | Ink, chalk, orange, lavender; unboxed cutout art | Same palette, transparent generated assets, no image wash. Inactive study labels brightened after axe contrast finding. |
-| Study form | Luminous folded glass ring dominates right | Dedicated Fold cutout stays at rest; the original helix meshes now carry UV texture sampled from that artwork for a closer orange/lavender glass treatment during rotation. |
+| Study form | Luminous folded glass ring dominates right | The Woven Fold is actual closed ribbon geometry with orange/lavender UV texture; desktop and mobile stills are rendered from its front view. The original cylindrical helix remains selectable. |
 | Finale | Chalk reset, large black heading, cropped right-hand artwork | Color-world shift and copy preserved; crop enlarged after comparison. The final crop echoes the hero knot rather than reproducing the concept's exact single ribbon. |
 | Responsive hierarchy | Mobile title/CTA precede sculpture | 390px render follows the planned reading order; 768px breakpoint moves hero art below copy and keeps finale process labels clear. |
 
@@ -35,4 +35,10 @@ The 2026-09-25 scores above were preliminary. The 2026-09-26 revision addressed 
 
 - `npm run build`, `npm run verify:ui`, and root `npm test` pass. Desktop and mobile live WebGL screenshots are saved in `design/final/`.
 - `design probe` saves the fallback and dragged state side by side; `design audit` reports no clipped media, horizontal overflow, console errors, or axe violations at 1440, 768, and 390 px.
-- Remaining visual limit: the original generated Fold still has a continuous ribbon silhouette, while the interactive form uses the approved cylindrical helix meshes. Its reference-sampled texture now matches the glass treatment, but a precise topology match would require a source 3D mesh or a revised still from the model.
+- The original generated Fold was a still with no recoverable hidden geometry. The follow-up builds a new real 3D ribbon and exports its own preview, keeping the original cylindrical helix as an alternate.
+
+## Woven Fold follow-up — 2026-09-26
+
+- Removed the image extrusion after a rotated probe showed it as a thickened picture. The new mesh is a closed, twisted oval ribbon with real crossings, textured from the project artwork.
+- Exported desktop and mobile previews from the WebGL front view. Click probes measured 2.15% desktop difference before final opacity correction and 0.02% mobile difference; `verify:ui` now asserts under 5% at both sizes. The remaining percentage is a pixel diagnostic, so the paired images were also inspected visually.
+- The original helix mode, drag, keyboard interaction, all three studies, mobile layout, and no page errors are exercised by `verify:ui`. Warmed drag probing reported headless browser median frame intervals of about 33ms at 40% interaction pixel ratio; actual GPU performance remains device dependent. Full sharpness returns after motion settles.
