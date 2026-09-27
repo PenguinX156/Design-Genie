@@ -3,6 +3,8 @@ import { resolve } from 'node:path';
 import { scanProject } from '../core/scan.mjs';
 import { initMemory } from '../core/memory.mjs';
 import { searchResources } from '../core/resources.mjs';
+import { routeWorkflow } from '../core/workflow.mjs';
+import { projectContext } from '../core/context.mjs';
 
 const [command, ...args] = process.argv.slice(2);
 const option = (name, fallback) => { const index = args.indexOf(`--${name}`); return index < 0 ? fallback : args[index + 1]; };
@@ -16,7 +18,9 @@ const critique = `# Rendered critique worksheet\n\nInspect .design/DESIGN.md and
 try {
   switch (command) {
     case 'scan': print(scanProject(project)); break;
+    case 'context': print(projectContext(project)); break;
     case 'init': print(initMemory(project)); break;
+    case 'workflow': print(routeWorkflow({ scope: option('scope', 'new'), signature: option('signature', 'standard') })); break;
     case 'directions': print(directions); break;
     case 'resources': print(searchResources(option('query', ''))); break;
     case 'critique': print(critique); break;
@@ -39,6 +43,6 @@ try {
     }
     case 'baseline': print((await import('../visual-audit/browser.mjs')).saveBaseline(project)); break;
     case 'diff': print((await import('../visual-audit/browser.mjs')).diffBaseline(project)); break;
-    default: print('Usage: design <scan|init|directions|resources|probe|capture|audit|critique|baseline|diff> [--project PATH] [--url URL] [--query TEXT] [--selector CSS] [--viewport desktop|tablet|mobile] [--action none|click|drag] [--trigger CSS] [--ready CSS] [--warm-ready CSS] [--profile-ms 1200]'); process.exitCode = command ? 1 : 0;
+    default: print('Usage: design <scan|context|init|workflow|directions|resources|probe|capture|audit|critique|baseline|diff> [--project PATH] [--scope new|redesign|targeted|review] [--signature standard|interactive|3d] [--url URL] [--query TEXT] [--selector CSS] [--viewport desktop|tablet|mobile] [--action none|click|drag] [--trigger CSS] [--ready CSS] [--warm-ready CSS] [--profile-ms 1200]'); process.exitCode = command ? 1 : 0;
   }
 } catch (error) { console.error(error.message); process.exitCode = 1; }

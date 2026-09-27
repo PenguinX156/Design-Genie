@@ -9,6 +9,8 @@ See [LUMENFIELD](showcase/lumenfield/README.md), an interactive exhibition site 
 Requires Node 20 or newer. Install dependencies in this repository with `npm ci` and Chromium once with `npx playwright install chromium`. Run the CLI by absolute path, or use `npm run design --` from this repository:
 
 ```sh
+node /path/to/Design-Genie/packages/cli/design.mjs context --project /path/to/web-app
+node /path/to/Design-Genie/packages/cli/design.mjs workflow --scope new --signature standard
 node /path/to/Design-Genie/packages/cli/design.mjs scan --project /path/to/web-app
 node /path/to/Design-Genie/packages/cli/design.mjs init --project /path/to/web-app
 node /path/to/Design-Genie/packages/cli/design.mjs probe --project /path/to/web-app --url http://localhost:3000 --selector .interactive-stage --action drag --ready .interactive-stage.is-ready
@@ -18,14 +20,16 @@ node /path/to/Design-Genie/packages/cli/design.mjs baseline --project /path/to/w
 node /path/to/Design-Genie/packages/cli/design.mjs diff --project /path/to/web-app
 ```
 
-Read [`skills/art-director/SKILL.md`](skills/art-director/SKILL.md) to start a new design, or [`skills/visual-critic/SKILL.md`](skills/visual-critic/SKILL.md) for a rendered review. `init` creates `.design/` without replacing existing decisions. Commit that directory in the target project; captures and baselines are ignored there by default so a team can decide what to retain.
+Start with `context` and `workflow` to select the smallest useful path. `--scope` can be `new`, `redesign`, `targeted`, or `review`; `--signature` can be `standard`, `interactive`, or `3d`. These choices route effort and checks, not appearance. Read [`skills/art-director/SKILL.md`](skills/art-director/SKILL.md) for new direction work or [`skills/visual-critic/SKILL.md`](skills/visual-critic/SKILL.md) for a rendered review. `init` creates `.design/` without replacing existing decisions. Its short `BRIEF.md` is the handoff for later agent turns; keep it under about 250 words, then open deeper files only when relevant. Commit `.design/` in the target project; captures and baselines are ignored there by default so a team can decide what to retain.
 
 ## What the commands do
 
 | Command | Result |
 | --- | --- |
 | `scan` | JSON summary of framework, package manager, dependencies, fonts, tokens, and structure |
+| `context` | Compact stack and `.design/BRIEF.md` handoff for a returning agent |
 | `init` | Copy the design memory template without overwriting files |
+| `workflow --scope ... --signature ...` | Route planning and QA effort by task size and technical risk, without choosing a style |
 | `directions` | Print the required three-direction decision worksheet |
 | `resources --query ...` | Search curated links and display usage/license cautions |
 | `probe --selector ...` | Capture one section before and after a click, drag, or CSS `--trigger`; drag also saves a during-interaction image and canvas resolution report |
@@ -48,3 +52,9 @@ See [`ARCHITECTURE.md`](ARCHITECTURE.md), [`CONTRIBUTING.md`](CONTRIBUTING.md), 
 For a still-to-interactive 3D element, use the [3D reference parity checklist](references/3d-reference-parity.md). It records the geometry, texture, first-frame, input, fallback, and mobile checks the automated audit cannot judge.
 
 For overall UI quality, use the [website quality playbook](references/website-quality.md). It turns art direction into practical checks for composition, content, typography, visual assets, responsive layouts, states, and a short review loop.
+
+## Faster agent loop
+
+For a new site or major redesign, compare concise concepts once, pick a product-specific direction, and record it. Create expensive visual assets only when they help choose or implement that direction. Build the primary flow with representative content, then prototype the riskiest visual or interaction before filling out the page. For a targeted change, preserve the existing direction and inspect only the affected surface. Use one focused probe per uncertain state, batch fixes, and reserve three-viewport capture and audit for release or changes that affect shared layout. Read specialist 3D guidance only when the project actually uses 3D. Reuse approved assets and the brief across turns instead of regenerating concepts or rereading the whole project.
+
+This is a cost strategy, not a promise of measured savings. The [evaluation protocol](benchmarks/PROTOCOL.md) calls for comparing quality, time, token use, and tool calls across multiple kinds of websites before claiming a general improvement.

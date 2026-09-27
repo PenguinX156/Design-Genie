@@ -5,7 +5,7 @@ Use this for a new site or a substantial redesign. The goal is a distinctive, us
 ## Decide before polishing
 
 1. State the audience, primary task, content priority, desired trust or emotion, and real constraints. Mark unknowns. Read the existing brand and code before changing them.
-2. Compare about three different concepts by composition, type, imagery, interaction, and product rationale. Pick one. A palette swap is not another concept.
+2. For a new site or major redesign, compare about three different concepts by composition, type, imagery, interaction, and product rationale. Pick one. A palette swap is not another concept. For a targeted edit, preserve the chosen direction.
 3. Define a small set of design rules: type scale, spacing rhythm, color roles, image treatment, component states, and responsive changes. Write why each signature moment helps the page.
 4. Put actual or representative content in the layout early. A beautiful empty shell can hide problems with long titles, missing images, dense data, and localization.
 
@@ -23,6 +23,6 @@ Use this for a new site or a substantial redesign. The goal is a distinctive, us
 
 1. Implement the core flow and one signature moment. Use one focused `design probe` for the most uncertain section or state, then inspect its images. For 3D, first compare placeholder to live frame; then drag and inspect the during-drag and rotated images.
 2. Write findings as evidence, user impact, severity, and a concrete fix. Batch related fixes. Reprobe only affected states. Use the [critique rubric](critique-rubric.md) to avoid vague judgments such as "looks polished."
-3. Run `design capture` and `design audit` at desktop, tablet, and mobile after targeted states pass. Inspect full pages, keyboard navigation, and motion in a real browser. Stop after three focused rounds unless a critical issue remains.
+3. For a new or globally changed site, run `design capture` and `design audit` at desktop, tablet, and mobile after targeted states pass. For a local change, verify its affected state and adjacent widths. Inspect keyboard navigation and motion in a real browser. Stop after three focused rounds unless a critical issue remains.
 
 These checks are a quality gate, not a style recipe. A quiet utility app and an experimental exhibition can both meet it through different choices.

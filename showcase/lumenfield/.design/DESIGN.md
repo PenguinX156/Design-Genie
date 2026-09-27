@@ -23,11 +23,11 @@ Desktop: edge-to-edge dark canvas with 4vw gutters; brand and three text links; 
 ## Signature moments
 
 1. Glass-knot hero: generated transparent artifact from the concept, positioned in deep negative space; gentle pointer response makes it feel suspended.
-2. Live studies: the generated Fold artwork preserves the resting concept, then selectable geometry with reflective material and lighting responds to pointer/touch drag, arrow keys, and study changes. The engaged object is live WebGL.
+2. Live studies: the Fold's resting preview is rendered from the approved helix model and camera. Reflective material and lighting respond to pointer/touch drag, arrow keys, and study changes. The engaged object is live WebGL.
 3. Chalk finale: a cohesive color-world transition for a memorable final beat.
 
 ## Anti-patterns in this context
 
 No card grid, pill badges, fake metrics, cursor replacement, long intro loader, auto-advancing carousel, or distracting ambient motion.
 
-Source concepts: `design/concepts/hero.png`, `studies.png`, `finale.png`, and `mobile-hero.png`. These are the visual spec; text and controls are HTML.
+Source concepts: `design/concepts/hero.png`, `studies.png`, `finale.png`, and `mobile-hero.png`. They informed the original art direction; the current Fold preview is generated from the live model. Text and controls are HTML.

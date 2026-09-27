@@ -26,7 +26,18 @@ export function scanProject(root) {
   const all = { ...pkg.dependencies, ...pkg.devDependencies };
   const files = filesUnder(root);
   const has = name => files.includes(name);
-  const framework = all.next ? `Next.js ${all.next}` : all['@remix-run/react'] ? 'Remix' : all['@angular/core'] ? 'Angular' : all.vue ? 'Vue' : all.react ? 'React' : all.svelte ? 'Svelte' : has('index.html') ? 'Static HTML' : 'Unknown';
+  const framework = all.next ? `Next.js ${all.next}`
+    : all.nuxt ? 'Nuxt'
+    : all['@remix-run/react'] ? 'Remix'
+    : all['@angular/core'] ? 'Angular'
+    : all.astro ? 'Astro'
+    : all['@sveltejs/kit'] ? 'SvelteKit'
+    : all.vue ? 'Vue'
+    : all.react ? 'React'
+    : all.svelte ? 'Svelte'
+    : all['solid-js'] ? 'Solid'
+    : all.vite ? 'Vite (vanilla)'
+    : has('index.html') ? 'Static HTML' : 'Unknown';
   const packageManager = has('pnpm-lock.yaml') ? 'pnpm' : has('yarn.lock') ? 'Yarn' : has('bun.lockb') || has('bun.lock') ? 'Bun' : has('package-lock.json') ? 'npm' : pkg.packageManager || 'Unknown';
   const styling = [all.tailwindcss && 'Tailwind CSS', all['styled-components'] && 'styled-components', all['@emotion/react'] && 'Emotion', files.some(f => /\.module\.css$/.test(f)) && 'CSS Modules', files.some(f => /\.css$/.test(f)) && 'CSS'].filter(Boolean);
   const components = depsFor(all, ['@radix-ui/react-dialog', '@radix-ui/react-slot', '@base-ui/react', '@mui/material', 'antd', '@chakra-ui/react']);
